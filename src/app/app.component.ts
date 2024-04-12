@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { SocketioService } from './socketio.service';
+import { hashMessage } from 'src/utils';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -11,7 +12,7 @@ export class AppComponent {
   title = 'socketio-angular';
 
   userID: String = "";
-  mensaje: String = "";
+  mensaje: string = "";
   destinatario: String = "";
   contrasenha: String = "";
 
@@ -39,8 +40,9 @@ export class AppComponent {
     });
   }
 
-  enviarMensaje() {
+  async enviarMensaje () {
     console.log('Enviar mensaje a:', this.destinatario, ', Mensaje: ', this.mensaje);
+    console.log('mensaje hasheado:', await hashMessage(this.mensaje))
     this.socketService.sendMessageToUser(this.destinatario, this.mensaje);
   }
 
