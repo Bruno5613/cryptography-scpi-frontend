@@ -1,7 +1,6 @@
-<div class="col-12 p-3">
+<div class="col-12">
 
   <div>
-    <p class="fs-1">Secure Communication Protocol Implementation</p>
     <ng-template #conectado>
       <div class="badge text-bg-success text-wrap">
         Conectado al servidor con id: {{ userID }}
@@ -9,14 +8,22 @@
     </ng-template>
   </div>
   
-  <div class="col-lg-6 col-xl-6 col-sm-12 col-md-12" *ngIf="!estaConectado; else conectado">
-    <div class="input-group mb-3">
-      <input type="text" class="form-control" placeholder="Ingresa un identificador para conectarte al servidor" [(ngModel)]="userID">
-      <button class="btn btn-outline-info" type="button" id="button-addon2" (click)="conectarAlServidor()">Conectar al servidor</button>
+  <section class="grid h-screen place-content-center bg-slate-900 text-slate-300" *ngIf="!estaConectado; else conectado">
+    <div class="mb-10 text-center text-indigo-400">
+      <h1 class="text-3xl font-bold tracking-widest">Secure Communication Protocol Implementation</h1>
+      <p>Ingresa tu <span class="font-bold">identificador</span> y una <span class="font-bold">contraseña</span> para conectarte</p>
     </div>
-  </div>
+    <div class="flex flex-col items-center justify-center space-y-6">
+      <input [(ngModel)]="userID" name="password" placeholder="Identificador" class="w-80 appearance-none rounded-full border-0 bg-slate-800/50 p-2 px-4 focus:bg-slate-800 focus:ring-2 focus:ring-orange-500" />
+      <div>
+        <input type="password" [(ngModel)]="contrasenha" id="confirm_password" name="confirm_password" placeholder="Contraseña" class="w-80 appearance-none rounded-full border-0 bg-slate-800/50 p-2 px-4 focus:bg-slate-800 focus:ring-2 focus:ring-orange-500" />
+        <p id="validation" class="text-center text-orange-500 italic text-sm"></p>
+      </div>
+      <button id="button-addon2" (click)="conectarAlServidor()" id="showPw" class="rounded-full bg-indigo-500 p-2 px-4 text-white hover:bg-orange-500">Ingresar</button>
+    </div>
+  </section>
   
-  <hr>
+  <hr *ngIf="estaConectado">
 
   <div class="col-12" *ngIf="estaConectado">
     <div class="input-group mb-3">
@@ -26,12 +33,6 @@
     </div>
   </div>
 
-  <div class="col-12" *ngIf="estaConectado">
-    <div class="input-group mb-3">
-      <input type="password" class="form-control" placeholder="Ingresa la contraseña" [(ngModel)]="contrasenha">      
-      <button class="btn btn-outline-info" type="button" id="button-addon2" (click)="generateKeyPair()">Generar llaves</button>
-    </div>
-  </div>
   
   <div *ngIf="estaConectado">
     <p class="fs-4">Mensajes recibidos:</p>
