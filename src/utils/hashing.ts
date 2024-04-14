@@ -10,4 +10,17 @@ export async function hashMessage(message: string) {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     
     return hashHex;
+    
+}
+
+export function verifyIntegrity(senderHash: String, reciveHash: String): boolean{
+    if(senderHash.length != reciveHash.length){
+        return false
+    }
+    let diff = 0;
+    for(let i=0; i < senderHash.length; i++){
+        diff |= senderHash.charCodeAt(i) ^ reciveHash.charCodeAt(i);
+    }
+    return diff===0
+
 }
