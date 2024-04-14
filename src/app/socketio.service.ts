@@ -28,7 +28,7 @@ export class SocketioService {
     }
   }
 
-  sendMessageToUser(userId: String, message: String) {
+  sendMessageToUser(userId: String, message: any) {
     // Enviar un mensaje a un cliente específico usando su ID de usuario
     if (this.socket) {
       this.socket.emit('messageToUser', { userId, message });

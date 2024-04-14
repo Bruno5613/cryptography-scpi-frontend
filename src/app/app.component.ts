@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SocketioService } from './socketio.service';
-import { hashMessage } from 'src/utils';
+import {createPair, decodifica, decryptAES, deriveKey, encryptAES, hashMessage } from 'src/utils';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -42,8 +42,19 @@ export class AppComponent {
 
   async enviarMensaje () {
     console.log('Enviar mensaje a:', this.destinatario, ', Mensaje: ', this.mensaje);
-    console.log('mensaje hasheado:', await hashMessage(this.mensaje))
-    this.socketService.sendMessageToUser(this.destinatario, this.mensaje);
+    console.log('mensaje hasheado:', await hashMessage(this.mensaje));
+    //encryptAES(derKey: CryptoKey, message:string) 
+    const llave = await createPair();
+    const llave2 = await createPair();
+    let sec1 = await deriveKey( llave.privateKey, llave2.publicKey)
+    let sec2 = await deriveKey( llave2.privateKey, llave.publicKey)
+    
+    const initV = crypto.getRandomValues(new Uint8Array(16));//¿El vector inicial se pasa al desencritar
+    let cifrado = await encryptAES(sec1,this.mensaje,initV);
+    this.socketService.sendMessageToUser(this.destinatario, cifrado.toString());
+    let decifrado = await decryptAES(sec2, cifrado,initV);
+    console.log('mensaje desencriptado:', decodifica(decifrado));
+  
   }
 
   generateKeyPair() {
