@@ -14,7 +14,7 @@ export class AppComponent {
   userID: String = "";
   mensaje: String = "";
   destinatario: String = "";
-  contrasenha: String = "";
+  userPass: String = "";
 
   mensajesRecibidos: String[] = []
 

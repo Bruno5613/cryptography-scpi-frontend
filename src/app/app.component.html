@@ -16,7 +16,7 @@
     <div class="flex flex-col items-center justify-center space-y-6">
       <input [(ngModel)]="userID" name="password" placeholder="Identificador" class="w-80 appearance-none rounded-full border-0 bg-slate-800/50 p-2 px-4 focus:bg-slate-800 focus:ring-2 focus:ring-orange-500" />
       <div>
-        <input type="password" [(ngModel)]="contrasenha" id="confirm_password" name="confirm_password" placeholder="Contraseña" class="w-80 appearance-none rounded-full border-0 bg-slate-800/50 p-2 px-4 focus:bg-slate-800 focus:ring-2 focus:ring-orange-500" />
+        <input type="password" [(ngModel)]="userPass" id="confirm_password" name="confirm_password" placeholder="Contraseña" class="w-80 appearance-none rounded-full border-0 bg-slate-800/50 p-2 px-4 focus:bg-slate-800 focus:ring-2 focus:ring-orange-500" />
         <p id="validation" class="text-center text-orange-500 italic text-sm"></p>
       </div>
       <button id="button-addon2" (click)="conectarAlServidor()" id="showPw" class="rounded-full bg-indigo-500 p-2 px-4 text-white hover:bg-orange-500">Ingresar</button>
