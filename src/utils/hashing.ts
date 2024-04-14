@@ -1,6 +1,6 @@
-export async function hashMessage(message: string) {
+export async function hashMessage(message: String) {
     // Codificar el mensaje en un Uint8Array
-    const msgBuffer = new TextEncoder().encode(message);
+    const msgBuffer = new TextEncoder().encode(message.toString());
     
     // Hash el mensaje
     const hashBuffer = await crypto.subtle.digest('SHA-512', msgBuffer);
