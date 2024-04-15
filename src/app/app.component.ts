@@ -12,9 +12,9 @@ export class AppComponent {
   title = 'socketio-angular';
 
   userID: String = "";
-  mensaje: string = "";
+  mensaje: String = "";
   destinatario: String = "";
-  contrasenha: String = "";
+  userPass: String = "";
 
   keys: CryptoKeyPair | undefined;
 
@@ -35,6 +35,19 @@ export class AppComponent {
 
   conectarAlServidor() {
     this.socketService.setupSocketConnection(this.userID);
+
+    console.log("Generando ECDSA")
+    this.socketService.generateECDSAKeyPair().subscribe((keyPair) => {
+      console.log('ECDSA key pair generated:', keyPair);
+      window.crypto.subtle.exportKey("jwk", keyPair.publicKey).then(publicKey => {
+        console.log('Public key:', publicKey);
+      })
+
+      window.crypto.subtle.exportKey("jwk", keyPair.privateKey).then(privateKey => {
+        console.log('Private key:', privateKey);
+      })
+    })
+
     this.estaConectado = true;
 
     // Suscribirse al evento new_message para recibir mensajes del servidor
