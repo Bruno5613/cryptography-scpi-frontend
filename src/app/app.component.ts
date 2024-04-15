@@ -12,7 +12,7 @@ export class AppComponent {
   title = 'socketio-angular';
 
   userID: String = "";
-  mensaje: String = "";
+  mensaje: string = "";
   destinatario: String = "";
   userPass: String = "";
 
