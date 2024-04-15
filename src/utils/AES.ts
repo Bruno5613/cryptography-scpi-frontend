@@ -9,22 +9,37 @@ export async function decryptAES(derKey: CryptoKey, message:ArrayBuffer, initV:U
     console.log('mensaje encriptado:', decodifica(message));
     return await crypto.subtle.decrypt({name:'AES-CBC',iv:initV},derKey, message);
 };
-//se mete la clave publica del receptor y la clave privada del emisor
-export function deriveKey(privateKey: CryptoKey, publicKey: CryptoKey){
-    return crypto.subtle.deriveKey(
-        {
-          name: "ECDH",
-          public: publicKey,
-        },
-        privateKey,
-        {
-          name: "AES-CBC",
-          length: 128,
-        },
-        false,
-        ["encrypt", "decrypt"],
-      );
-};
+
+export async function symmetricKeyByPassword(contraseña: string): Promise<CryptoKey> {
+  // Convertir la contraseña a un búfer de bytes
+  const contraseñaBuffer = new TextEncoder().encode(contraseña);
+
+  // Generar un salt aleatorio
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  
+  // Derivar la clave utilizando PBKDF2 con el salt generado
+  const clave = await crypto.subtle.importKey(
+      'raw',
+      contraseñaBuffer,
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey']
+  );
+
+  return crypto.subtle.deriveKey(
+      {
+          name: 'PBKDF2',
+          salt,
+          iterations: 100000, // Número de iteraciones recomendado por seguridad
+          hash: 'SHA-256'
+      },
+      clave,
+      { name: 'AES-CBC', length: 128 },
+      true,
+      ['encrypt', 'decrypt']
+  );
+}
+
 export async function createPair() {
     return await crypto.subtle.generateKey(
         {

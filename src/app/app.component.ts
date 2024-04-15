@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SocketioService } from './socketio.service';
-import { hashMessage } from 'src/utils';
+import { hashMessage, symmetricKeyByPassword, encryptAES, decryptAES, decodifica } from 'src/utils';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -12,9 +12,11 @@ export class AppComponent {
   title = 'socketio-angular';
 
   userID: String = "";
-  mensaje: String = "";
+  mensaje: string = "";
   destinatario: String = "";
-  userPass: String = "";
+  userPass: string = "";
+  symmetricKey: CryptoKey = {} as CryptoKey;
+  counterMessage : number = 0;
 
   mensajesRecibidos: String[] = []
 
@@ -29,9 +31,11 @@ export class AppComponent {
     this.socketService.disconnect();
   }
 
-  conectarAlServidor() {
+  async conectarAlServidor() {
     this.socketService.setupSocketConnection(this.userID);
+    this.symmetricKey = await symmetricKeyByPassword(this.userPass);
 
+    console.log("Clave simetrica: " + this.symmetricKey)
     console.log("Generando ECDSA")
     this.socketService.generateECDSAKeyPair().subscribe((keyPair) => {
       console.log('ECDSA key pair generated:', keyPair);
@@ -45,20 +49,29 @@ export class AppComponent {
     })
 
     this.estaConectado = true;
-
     // Suscribirse al evento new_message para recibir mensajes del servidor
     this.socketService.onNewMessage().subscribe((message: String) => {
       this.mensajesRecibidos.push(message)
-      console.log('Mensaje recibido:', message);
+      if (this.counterMessage === 0){
+        console.log('Mensaje cifrado recibido:', message);
+        this.counterMessage++;
+      }
+      else if (this.counterMessage === 1){
+        console.log('IV recibido:', message);
+        this.counterMessage = 0;
+      }
     });
   }
 
   async enviarMensaje () {
+    const initV = crypto.getRandomValues(new Uint8Array(16));//¿El vector inicial se pasa al desencritar
+    const cifrado = await encryptAES(this.symmetricKey, this.mensaje, initV);
+
+    this.socketService.sendMessageToUser(this.destinatario, cifrado);
+    this.socketService.sendMessageToUser(this.destinatario, initV);
+
     console.log('Enviar mensaje a:', this.destinatario, ', Mensaje: ', this.mensaje);
     console.log('mensaje hasheado:', await hashMessage(this.mensaje))
-    this.socketService.sendMessageToUser(this.destinatario, this.mensaje);
   }
 
 }
-
-

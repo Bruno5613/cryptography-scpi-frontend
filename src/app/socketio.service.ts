@@ -28,7 +28,7 @@ export class SocketioService {
     }
   }
 
-  sendMessageToUser(userId: String, message: String) {
+  sendMessageToUser(userId: String, message: any) {
     // Enviar un mensaje a un cliente específico usando su ID de usuario
     if (this.socket) {
       this.socket.emit('messageToUser', { userId, message });
@@ -38,7 +38,7 @@ export class SocketioService {
 
   onNewMessage(): Observable<String> {
     return new Observable<String>(observer => {
-      this.socket.on('new_message', (message: String) => {
+      this.socket.on('new_message', (message: any) => {
         observer.next(message);
       });
     });
