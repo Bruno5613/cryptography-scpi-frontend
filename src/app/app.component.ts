@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SocketioService } from './socketio.service';
-import { hashMessage, symmetricKeyByPassword, encryptAES, decryptAES, decodifica } from 'src/utils';
+import { createAsymetricPair, getMessageEncoding, hashMessage, signMessage, symmetricKeyByPassword, encryptAES, decryptAES, decodifica  } from 'src/utils';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -18,13 +18,17 @@ export class AppComponent {
   symmetricKey: CryptoKey = {} as CryptoKey;
   counterMessage : number = 0;
 
-  mensajesRecibidos: String[] = []
+  keys: CryptoKeyPair | undefined;
+
+  mensajesRecibidos: String[] = [];
 
   estaConectado: boolean = false;
 
   constructor(private socketService: SocketioService) { }
 
   ngOnInit() {
+    //Este debe generarse al dar la contraseña, hay que quitarlo
+    this.generateKeyPair()
   }
 
   ngOnDestroy() {
@@ -71,7 +75,13 @@ export class AppComponent {
     this.socketService.sendMessageToUser(this.destinatario, initV);
 
     console.log('Enviar mensaje a:', this.destinatario, ', Mensaje: ', this.mensaje);
-    console.log('mensaje hasheado:', await hashMessage(this.mensaje))
+    console.log('mensaje hasheado:', this.keys)
+    console.log('respuesta firma:', await signMessage(getMessageEncoding(this.mensaje), this.keys!.privateKey))
+    this.socketService.sendMessageToUser(this.destinatario, this.mensaje);
+  }
+
+  async generateKeyPair () {
+    await createAsymetricPair().then(keyPair => this.keys = keyPair)
   }
 
 }
