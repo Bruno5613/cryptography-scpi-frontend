@@ -13,7 +13,7 @@ export async function signMessage(message: Uint8Array, privateKey: CryptoKey){
     return signature
 }
 
-export function getMessageEncoding(message: string) {
+export function getMessageEncoding(message: any) {
     let enc = new TextEncoder();
     return enc.encode(message);
   }

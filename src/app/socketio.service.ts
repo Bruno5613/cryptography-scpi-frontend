@@ -36,9 +36,25 @@ export class SocketioService {
     }
   }
 
+  sendPublicKey(userId: String, message: any) {
+    // Enviar un mensaje a un cliente específico usando su ID de usuario
+    if (this.socket) {
+      this.socket.emit('publicToUser', { userId, message });
+      console.log("Publica enviada")
+    }
+  }
+
   onNewMessage(): Observable<String> {
     return new Observable<String>(observer => {
       this.socket.on('new_message', (message: any) => {
+        observer.next(message);
+      });
+    });
+  }
+
+  onNewPublic(): Observable<String> {
+    return new Observable<String>(observer => {
+      this.socket.on('new_public', (message: any) => {
         observer.next(message);
       });
     });

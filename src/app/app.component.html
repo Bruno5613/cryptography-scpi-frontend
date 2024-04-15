@@ -29,7 +29,8 @@
     <div class="input-group mb-3">
       <input type="text" class="form-control" placeholder="Ingresa tu mensaje" [(ngModel)]="mensaje">
       <input type="text" class="form-control" placeholder="ID del destinatario" [(ngModel)]="destinatario">
-      <button class="btn btn-outline-info" type="button" id="button-addon2" (click)="enviarMensaje()">Enviar mensaje al usuario: {{ destinatario }}</button>
+      <button class="btn btn-outline-info" type="button" id="button-addon2" (click)="enviarClavePublica()">Enviar clave publica</button>
+      <button class="btn btn-outline-info" type="button" id="button-addon3" (click)="enviarMensaje()">Enviar mensaje al usuario: {{ destinatario }}</button>
     </div>
   </div>
 
