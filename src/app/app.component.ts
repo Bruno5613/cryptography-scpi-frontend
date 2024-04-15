@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SocketioService } from './socketio.service';
-import { hashMessage } from 'src/utils';
+import { createAsymetricPair, getMessageEncoding, hashMessage, signMessage } from 'src/utils';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -16,13 +16,17 @@ export class AppComponent {
   destinatario: String = "";
   contrasenha: String = "";
 
-  mensajesRecibidos: String[] = []
+  keys: CryptoKeyPair | undefined;
+
+  mensajesRecibidos: String[] = [];
 
   estaConectado: boolean = false;
 
   constructor(private socketService: SocketioService) { }
 
   ngOnInit() {
+    //Este debe generarse al dar la contraseña, hay que quitarlo
+    this.generateKeyPair()
   }
 
   ngOnDestroy() {
@@ -42,22 +46,13 @@ export class AppComponent {
 
   async enviarMensaje () {
     console.log('Enviar mensaje a:', this.destinatario, ', Mensaje: ', this.mensaje);
-    console.log('mensaje hasheado:', await hashMessage(this.mensaje))
+    console.log('mensaje hasheado:', this.keys)
+    console.log('respuesta firma:', await signMessage(getMessageEncoding(this.mensaje), this.keys!.privateKey))
     this.socketService.sendMessageToUser(this.destinatario, this.mensaje);
   }
 
-  generateKeyPair() {
-    console.log("Generando ECDSA")
-    this.socketService.generateECDSAKeyPair().subscribe((keyPair) => {
-      console.log('ECDSA key pair generated:', keyPair);
-      window.crypto.subtle.exportKey("jwk", keyPair.publicKey).then(publicKey => {
-        console.log('Public key:', publicKey);
-      })
-
-      window.crypto.subtle.exportKey("jwk", keyPair.privateKey).then(privateKey => {
-        console.log('Private key:', privateKey);
-      })
-    })
+  async generateKeyPair () {
+    await createAsymetricPair().then(keyPair => this.keys = keyPair)
   }
 
 }

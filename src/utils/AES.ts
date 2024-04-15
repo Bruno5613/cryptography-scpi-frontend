@@ -25,13 +25,15 @@ export function deriveKey(privateKey: CryptoKey, publicKey: CryptoKey){
         ["encrypt", "decrypt"],
       );
 };
-export async function createPair() {
-    return await crypto.subtle.generateKey(
-        {
-          name: "ECDH",
-          namedCurve: "P-384",
-        },
-        false,
-        ["deriveKey"],
-    );
+export async function createAsymetricPair(): Promise<CryptoKeyPair> {
+    return window.crypto.subtle.generateKey(
+      {
+        name: "RSA-PSS",
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: "SHA-256",
+      },
+      true,
+      ["sign", "verify"]
+    )
 };
